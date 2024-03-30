@@ -1,0 +1,36 @@
+import re
+
+def count_words(text):
+    """Count the number of words in the provided text."""
+    words = re.findall(r'\b\w+\b', text)
+    return len(words)
+
+def main():
+    print("Welcome to Word Count Tool!")
+
+    while True:
+        try:
+            choice = input("Enter '1' to input text manually, '2' to input text from a file, or '3' to exit: ")
+
+            if choice == '1':
+                input_text = input("Enter the text: ")
+                word_count = count_words(input_text)
+                print(f"Word count: {word_count}")
+            elif choice == '2':
+                file_path = input("Enter the file path: ")
+                with open(file_path, 'r') as file:
+                    file_text = file.read()
+                    word_count = count_words(file_text)
+                    print(f"Word count: {word_count}")
+            elif choice == '3':
+                print("Thank you for using Word Count Tool!")
+                break
+            else:
+                print("Invalid choice. Please enter '1', '2', or '3'.")
+        except FileNotFoundError:
+            print("File not found. Please enter a valid file path.")
+        except Exception as e:
+            print("An error occurred:", e)
+
+if __name__ == "__main__":
+    main()
