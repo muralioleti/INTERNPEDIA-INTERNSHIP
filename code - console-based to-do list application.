@@ -1,0 +1,84 @@
+import json
+
+class Task:
+    def __init__(self, id, description, completed=False):
+        self.id = id
+        self.description = description
+        self.completed = completed
+
+class ToDoList:
+    def __init__(self):
+        self.tasks = []
+
+    def add_task(self, task):
+        self.tasks.append(task)
+
+    def remove_task(self, task_id):
+        self.tasks = [task for task in self.tasks if task.id != task_id]
+
+    def mark_task_as_done(self, task_id):
+        for task in self.tasks:
+            if task.id == task_id:
+                task.completed = True
+                break
+
+    def mark_task_as_undone(self, task_id):
+        for task in self.tasks:
+            if task.id == task_id:
+                task.completed = False
+                break
+
+    def view_tasks(self):
+        for task in self.tasks:
+            status = "Done" if task.completed else "Pending"
+            print(f"ID: {task.id}, Description: {task.description}, Status: {status}")
+
+    def save_to_file(self, filename):
+        with open(filename, 'w') as f:
+            json.dump([vars(task) for task in self.tasks], f)
+
+    def load_from_file(self, filename):
+        try:
+            with open(filename, 'r') as f:
+                tasks_data = json.load(f)
+                self.tasks = [Task(**task_data) for task_data in tasks_data]
+        except FileNotFoundError:
+            pass
+
+def main():
+    todo_list = ToDoList()
+    todo_list.load_from_file("tasks.json")
+
+    while True:
+        print("\n1. View tasks")
+        print("2. Add task")
+        print("3. Mark task as done")
+        print("4. Mark task as undone")
+        print("5. Remove task")
+        print("6. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            todo_list.view_tasks()
+        elif choice == '2':
+            description = input("Enter task description: ")
+            todo_list.add_task(Task(len(todo_list.tasks) + 1, description))
+        elif choice == '3':
+            task_id = int(input("Enter task ID to mark as done: "))
+            todo_list.mark_task_as_done(task_id)
+        elif choice == '4':
+            task_id = int(input("Enter task ID to mark as undone: "))
+            todo_list.mark_task_as_undone(task_id)
+        elif choice == '5':
+            task_id = int(input("Enter task ID to remove: "))
+            todo_list.remove_task(task_id)
+        elif choice == '6':
+            todo_list.save_to_file("tasks.json")
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
